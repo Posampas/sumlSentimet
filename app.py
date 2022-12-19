@@ -16,6 +16,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def home():
         return render_template("index.html")
 
+@app.route('/errorPage')
+def error():
+        return render_template("errorPage.html")
+
 @app.route('/success' , methods = ['GET' , 'POST'])
 def success():
     error = ''
@@ -26,6 +30,8 @@ def success():
                 text = request.form.get('text')
                 servie = c.ClarinService(text)
                 response_frame = servie.run()
+                if len(response_frame) == 0 or 'Polarity' not in response_frame.columns.to_list():
+                    return render_template('errorPage.html')
                 polarity = response_frame[response_frame['Polarity'] != 'None']['Polarity']
                 polarity = polarity.apply(lambda row: pd.to_numeric(row, errors='coerce'))
                 pd.Series.dropna(polarity, inplace =True)
@@ -39,7 +45,7 @@ def success():
                 return  render_template('success.html' , result = result, ans = ans)
             except Exception as e : 
                 print(str(e))
-                error = 'This image from this site is not accesible or inappropriate input'
+               
 
     else:
         return render_template('index.html')

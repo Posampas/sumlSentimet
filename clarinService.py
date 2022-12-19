@@ -74,7 +74,10 @@ class ClarinService:
         print('Unzipping file:', path_to_zip)
         zip_ref =  zipfile.ZipFile(path_to_zip, 'r')
         zip_ref.extractall(outputdir)
-        un_ziped_path = os.path.join(outputdir,[file_name for file_name in os.listdir(outputdir) if 'zip' not in file_name][0])
+        uziped_file_name  = [file_name for file_name in os.listdir(outputdir) if 'zip' not in file_name]
+        if not uziped_file_name:
+            return pd.DataFrame()
+        un_ziped_path = os.path.join(outputdir, uziped_file_name[0])
         print('Reading from unzippedfile:', un_ziped_path) 
         return pd.read_csv(un_ziped_path, sep=';' )
 
